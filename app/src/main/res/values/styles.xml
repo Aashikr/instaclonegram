@@ -5,4 +5,10 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="MyNavigationDrawerTheme" parent="MaterialNavigationDrawerTheme">
+        <item name="colorPrimary">#125688</item>
+        <item name="colorPrimaryDark">#125688</item>
+        <item name="colorAccent">#FFFFFF</item>
+    </style>
+
 </resources>
