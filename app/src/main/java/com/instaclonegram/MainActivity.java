@@ -12,6 +12,7 @@ import com.instaclonegram.fragments.FragmentFeed;
 import com.instaclonegram.fragments.FragmentProfile;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
+import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
 import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 public class MainActivity extends MaterialNavigationDrawer {
@@ -22,9 +23,11 @@ public class MainActivity extends MaterialNavigationDrawer {
         ab.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.instagramblue)));
         ab.setElevation(0);
         ab.setTitle("Instagram");
+        MaterialAccount account = new MaterialAccount(this.getResources(),"Kevin Systrom","kevin@instagram.com", R.drawable.kevinsys, R.drawable.smallsf);
         MaterialSection section1 = newSection("Profile", new FragmentProfile());
         MaterialSection section2 = newSection("Feed", new FragmentFeed());
         MaterialSection section3 = newSection("Explore", new FragmentExplore());
+        addAccount(account);
         addSection(section1);
         addSection(section2);
         addSection(section3);
