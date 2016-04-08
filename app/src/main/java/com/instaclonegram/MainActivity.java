@@ -19,6 +19,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     @Override
     public void init(Bundle bundle) {
+        this.disableLearningPattern();
         ActionBar ab = getSupportActionBar();
         ab.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.instagramblue)));
         ab.setElevation(0);

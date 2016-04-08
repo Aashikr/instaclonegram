@@ -1,6 +1,9 @@
 package com.instaclonegram.models;
 
+import android.graphics.Bitmap;
+
 public class Photo {
+    private Bitmap photo;
     private String id;
     private String username;
     private String caption;
@@ -10,6 +13,19 @@ public class Photo {
     private String height;
     private String width;
     private String privacy;
+
+    public Photo(Bitmap photo) {
+        super();
+        this.photo = photo;
+    }
+
+    public Bitmap getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Bitmap photo) {
+        this.photo = photo;
+    }
 
     public String getId() {
         return id;
