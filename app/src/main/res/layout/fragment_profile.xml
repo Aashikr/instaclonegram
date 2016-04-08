@@ -66,23 +66,23 @@
 
                                 <TextView
                                     android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="fill_parent"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
                                     android:id="@+id/tv_posts_cnt"
                                     android:layout_weight="1"
-                                    android:text="10"
+                                    android:text="102"
                                     android:textStyle="bold"
                                     android:gravity="center|bottom" />
 
                                 <TextView
                                     android:layout_width="fill_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="fill_parent"
                                     android:textAppearance="?android:attr/textAppearanceMedium"
                                     android:text="posts"
                                     android:id="@+id/tv_posts"
                                     android:layout_weight="1"
                                     android:gravity="center|top"
-                                    android:textSize="15dp" />
+                                    android:textSize="14dp" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -109,7 +109,7 @@
                                     android:id="@+id/tv_followers"
                                     android:layout_weight="1"
                                     android:gravity="center|top"
-                                    android:textSize="15dp" />
+                                    android:textSize="14dp" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -136,7 +136,7 @@
                                     android:id="@+id/tv_following"
                                     android:layout_weight="1"
                                     android:gravity="center|top"
-                                    android:textSize="15dp" />
+                                    android:textSize="14dp" />
                             </LinearLayout>
                         </LinearLayout>
 
@@ -153,34 +153,43 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="USERNAME"
+                        android:text="Kevin Systrom"
+                        android:textStyle="bold"
                         android:id="@+id/tv_profile_username"
                         android:layout_weight="1"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:textSize="15dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="DESCRIPTION"
+                        android:text="CEO &amp; Co-founder of Instagram"
                         android:id="@+id/tv_profile_description"
                         android:layout_weight="1"
-                        android:textColor="#000000" />
+                        android:textColor="#000000"
+                        android:textSize="14dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="LINK"
+                        android:text="www.instagram.com"
                         android:id="@+id/tv_profile_link"
                         android:layout_weight="1"
-                        android:textColor="#000000" />
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:textColorLink="#599edf"
+                        android:textSize="14dp" />
                 </LinearLayout>
 
             </LinearLayout>
