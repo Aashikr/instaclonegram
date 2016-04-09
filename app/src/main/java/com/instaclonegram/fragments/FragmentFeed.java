@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.instaclonegram.R;
+import com.like.LikeButton;
 
 /**
  * Created by lamine on 29/03/2016.
@@ -19,7 +20,9 @@ public class FragmentFeed extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
+        final View rootView = inflater.inflate(R.layout.photo_item, container, false);
+        //initialize_views(rootView);
         return rootView;
     }
+    
 }

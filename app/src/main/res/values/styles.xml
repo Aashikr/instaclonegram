@@ -15,11 +15,11 @@
     </style>
 
     <style name="MyNavigationDrawerTheme" parent="MaterialNavigationDrawerTheme">
-        <item name="colorPrimary">#125688</item>
-        <item name="colorPrimaryDark">#125688</item>
+        <item name="colorPrimary">#2d5b81</item>
+        <item name="colorPrimaryDark">#2d5b81</item>
         <item name="colorAccent">#FFFFFF</item>
         <item name="singleAccount">true</item>
-        <item name="drawerColor">#125688</item>
+        <item name="drawerColor">#2d5b81</item>
         <item name="sectionStyle">@style/MySectionTheme</item>
         <item name="subheaderStyle">@style/MySubheaderTheme</item>
     </style>

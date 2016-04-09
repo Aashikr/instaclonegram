@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/whitecolor"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgview_profile"
+            android:layout_width="41dp"
+            android:layout_height="73dp"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#b2b3b5"
+            android:layout_gravity="top"
+            android:src="@drawable/kevinsys"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.06"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="73dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="kevin"
+            android:textColor="@color/instagramblue"
+            android:id="@+id/textView"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imgview_profile"
+            android:layout_toEndOf="@+id/imgview_profile" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="13m"
+            android:id="@+id/textView2"
+            android:gravity="right"
+            android:layout_marginBottom="25dp"
+            android:layout_alignBottom="@+id/textView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="15dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView2"
+            android:src="@drawable/smallsf"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:layout_below="@+id/imgview_profile"
+            android:contentDescription="image"
+            android:layout_marginTop="-20dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_below="@+id/imageView2"
+            android:layout_marginTop="-55dp">
+
+            <com.like.LikeButton
+                app:icon_type="heart"
+                app:icon_size="40dp"
+                android:id="@+id/heart_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="150"
+                android:id="@+id/textView3"
+                android:textColor="@color/instagramblue"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginLeft="-20dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Likes"
+                android:textStyle="bold"
+                android:textColor="@color/instagramblue"
+                android:id="@+id/textView4"
+                android:gravity="center"
+                android:paddingLeft="5dp" />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
