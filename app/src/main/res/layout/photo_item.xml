@@ -9,10 +9,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:layout_marginTop="-8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgview_profile"
+            android:id="@+id/feed_profile_imgview"
             android:layout_width="41dp"
             android:layout_height="73dp"
             app:civ_border_width="1dp"
@@ -35,64 +36,60 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="kevin"
             android:textColor="@color/instagramblue"
-            android:id="@+id/textView"
+            android:id="@+id/feed_tv_username"
             android:gravity="center"
             android:textStyle="bold"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/imgview_profile"
-            android:layout_toEndOf="@+id/imgview_profile" />
+            android:layout_toRightOf="@+id/feed_profile_imgview"
+            android:layout_toEndOf="@+id/feed_profile_imgview" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="13m"
-            android:id="@+id/textView2"
+            android:id="@+id/feed_tv_timestamp"
             android:gravity="right"
             android:layout_marginBottom="25dp"
-            android:layout_alignBottom="@+id/textView"
+            android:layout_alignBottom="@+id/feed_tv_username"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginRight="15dp" />
 
         <ImageView
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView2"
-            android:src="@drawable/smallsf"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentEnd="false"
-            android:layout_below="@+id/imgview_profile"
-            android:contentDescription="image"
-            android:layout_marginTop="-20dp" />
+            android:layout_width="match_parent"
+            android:adjustViewBounds="true"
+            android:id="@+id/feed_imageView"
+            android:layout_below="@+id/feed_profile_imgview"
+            android:contentDescription="image"/>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_below="@+id/imageView2"
-            android:layout_marginTop="-55dp">
+            android:layout_below="@+id/feed_imageView"
+            android:layout_marginTop="-5dp">
 
             <com.like.LikeButton
                 app:icon_type="heart"
                 app:icon_size="40dp"
-                android:id="@+id/heart_button"
+                android:id="@+id/feed_heart_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="-20dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="150"
-                android:id="@+id/textView3"
+                android:id="@+id/feed_tv_likes_cnt"
                 android:textColor="@color/instagramblue"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:layout_marginLeft="-20dp" />
+                android:layout_marginLeft="-20dp"
+                android:layout_marginTop="-20dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -100,9 +97,10 @@
                 android:text="Likes"
                 android:textStyle="bold"
                 android:textColor="@color/instagramblue"
-                android:id="@+id/textView4"
+                android:id="@+id/feed_tv_likes"
                 android:gravity="center"
-                android:paddingLeft="5dp" />
+                android:paddingLeft="5dp"
+                android:layout_marginTop="-20dp" />
 
 
         </LinearLayout>

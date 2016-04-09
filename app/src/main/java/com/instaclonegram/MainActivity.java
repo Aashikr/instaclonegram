@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.client.Firebase;
 import com.instaclonegram.fragments.FragmentExplore;
 import com.instaclonegram.fragments.FragmentFeed;
 import com.instaclonegram.fragments.FragmentProfile;
@@ -19,14 +20,16 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     @Override
     public void init(Bundle bundle) {
+        Firebase.setAndroidContext(this);
+        Firebase myFirebaseRef = new Firebase("https://instaclonegram.firebaseio.com/");
         this.disableLearningPattern();
         ActionBar ab = getSupportActionBar();
         ab.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.instagramblue)));
         ab.setElevation(0);
         ab.setTitle("Instagram");
         MaterialAccount account = new MaterialAccount(this.getResources(),"Kevin Systrom","kevin@instagram.com", R.drawable.kevinsys, R.drawable.smallsf);
-        MaterialSection section1 = newSection("Profile", new FragmentProfile());
-        MaterialSection section2 = newSection("Feed", new FragmentFeed());
+        MaterialSection section1 = newSection("Profile", new FragmentProfile(myFirebaseRef));
+        MaterialSection section2 = newSection("Feed", new FragmentFeed(myFirebaseRef));
         MaterialSection section3 = newSection("Explore", new FragmentExplore());
         addAccount(account);
         addSection(section1);
