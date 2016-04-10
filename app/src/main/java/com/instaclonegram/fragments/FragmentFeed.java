@@ -21,9 +21,11 @@ import com.instaclonegram.R;
 import com.instaclonegram.adapters.FeedListViewAdapter;
 import com.instaclonegram.models.Photo;
 import com.like.LikeButton;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +53,10 @@ public class FragmentFeed extends Fragment {
         int screen_width = displayMetrics.widthPixels;
         int new_photo_height = (screen_width * photo_height) / photo_width;
         ListView lv = (ListView)rootView.findViewById(R.id.feed_listView);
+
+        FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
+        fab.attachToListView(lv);
+
         ArrayList<Photo> al = new ArrayList<>();
 
         al.add(0, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 0, "kevin", 0, "20m", screen_width, new_photo_height));
