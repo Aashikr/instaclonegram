@@ -34,6 +34,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class FragmentFeed extends Fragment {
     String imgPath, fileName;
     Bitmap bitmap;
     private static int RESULT_LOAD_IMG = 1;
+    private static String username = "kevin";
 
     Firebase firebase;
     public FragmentFeed() {
@@ -63,32 +65,46 @@ public class FragmentFeed extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         //initialize_views(rootView);
-        Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.smallsf, null);
-        int photo_height = d.getIntrinsicHeight();
-        int photo_width = d.getIntrinsicWidth();
+
+
         DisplayMetrics displayMetrics=getResources().getDisplayMetrics();
-        int screen_width = displayMetrics.widthPixels;
-        int new_photo_height = (screen_width * photo_height) / photo_width;
-        ListView lv = (ListView)rootView.findViewById(R.id.feed_listView);
+        final int screen_width = displayMetrics.widthPixels;
+        final ListView lv = (ListView)rootView.findViewById(R.id.feed_listView);
 
         FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
         fab.attachToListView(lv);
 
-        ArrayList<Photo> al = new ArrayList<>();
+        final ArrayList<Photo> al = new ArrayList<>();
 
-        al.add(0, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 0, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(1, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 1, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(2, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 2, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(3, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 3, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(4, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 4, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(5, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 5, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(6, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 6, "kevin", 0, "20m", screen_width, new_photo_height));
-        al.add(7, new Photo((BitmapFactory.decodeResource(getResources(), R.drawable.smallsf)), 7, "kevin", 0, "20m", screen_width, new_photo_height));
+        Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/images");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Map<String,Object> image_map = (Map<String, Object>) dataSnapshot.child("kevin").getValue();
+                    for (Map.Entry<String, Object> entry : image_map.entrySet()) {
+                        String photo_str = String.valueOf(entry.getValue());
+                        byte[] decodedString = Base64.decode(photo_str, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        if (decodedByte == null) {
+                            Log.d("decodedbyte", "null");
+                        }
+                        int photo_height = decodedByte.getHeight();
+                        int photo_width = decodedByte.getWidth();
+                        final int new_photo_height = (screen_width * photo_height) / photo_width;
+                        Photo photo = new Photo(decodedByte, 7, entry.getKey(), 0, "20m", screen_width, new_photo_height);
+                        al.add(photo);
+                    }
+                }
+                FeedListViewAdapter flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, firebase);
+                lv.setAdapter(flva);
+            }
 
-        for (Photo p : al) {
-            Log.d("NUMBER", Integer.toString(p.getId()));
-        }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
 
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,10 +137,11 @@ public class FragmentFeed extends Fragment {
                 options);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         // Must compress the Image to reduce image size to make upload easy
-        bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
         byte[] byte_arr = stream.toByteArray();
         // Encode Image to String
         encodedString = Base64.encodeToString(byte_arr, 0);
+        Log.d("SIZE IMAGE!!!!!", Integer.toString(encodedString.length()));
         return encodedString;
     }
 
@@ -153,12 +170,7 @@ public class FragmentFeed extends Fragment {
                 /* ENCODED */
 
                 String converted = convertImage();
-/*
-                ImageLoader imageLoader = ImageLoader.getInstance();
-                ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getActivity().getApplicationContext()).build();
-                imageLoader.init(config);
-                DisplayImageOptions options = new DisplayImageOptions.Builder().build();*/
-                firebase.child("image").child("kevin").setValue(converted);
+                firebase.child("images").child(username).child(fileName.replace(".", "o")).setValue(converted);
 
             } else {
                 Toast.makeText(this.getActivity().getApplicationContext(), "You haven't picked Image",

@@ -67,7 +67,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
 
             final ViewHolder finalHolder = holder;
 
-            firebase.addValueEventListener(new ValueEventListener() {
+/*            firebase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     Long like = (Long) snapshot.child("photo").child(Integer.toString(finalHolder.photo.getId())).child("like").getValue();
@@ -80,7 +80,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
                     //finalHolder.like_cnt.setText("0");
                 }
             });
-
+*/
             holder.like_button.setOnLikeListener(new OnLikeListener() {
                 @Override
                 public void liked(LikeButton likeButton) {
