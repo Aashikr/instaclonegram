@@ -2,7 +2,12 @@ package com.instaclonegram.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +26,8 @@ import com.like.LikeButton;
 import com.like.OnLikeListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -32,13 +39,17 @@ public class FeedListViewAdapter extends ArrayAdapter {
     private Context context;
     private int layoutResourceId;
     private ArrayList<Photo> data = new ArrayList<>();
+    private ArrayList<String> ids = new ArrayList<>();
     private Firebase firebase;
+    private int new_photo_height;
 
-    public FeedListViewAdapter(Context context, int layoutResourceId, ArrayList data, Firebase firebase) {
+
+    public FeedListViewAdapter(Context context, int layoutResourceId, ArrayList data, ArrayList ids, Firebase firebase) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+        this.ids = ids;
         this.firebase = firebase;
     }
 
@@ -46,12 +57,20 @@ public class FeedListViewAdapter extends ArrayAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         View row = convertView;
         ViewHolder holder = null;
+        final Photo photo = data.get(position);
+        final String str = ids.get(position);
+        final Firebase currentRef = firebase.child("images").child(str);
+        final Map<String, Object> likemap = new HashMap<String, Object>();
+        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
+        final int screen_width = displayMetrics.widthPixels;
+        new_photo_height = (screen_width * photo.getHeight()) / photo.getWidth();
+
         Log.d("Viewing", Integer.toString(data.get(position).getId()));
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
             holder = new ViewHolder();
-            holder.photo = data.get(position);
+
             holder.profile_pic = (CircleImageView)row.findViewById(R.id.feed_profile_imgview);
             holder.username = (TextView) row.findViewById(R.id.feed_tv_username);
             holder.username.setTextColor(ContextCompat.getColor(getContext(), R.color.instagramblue));
@@ -67,56 +86,64 @@ public class FeedListViewAdapter extends ArrayAdapter {
 
             final ViewHolder finalHolder = holder;
 
-/*            firebase.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    Long like = (Long) snapshot.child("photo").child(Integer.toString(finalHolder.photo.getId())).child("like").getValue();
-                    finalHolder.photo.setLike(like.intValue());
-                    finalHolder.like_cnt.setText(Integer.toString(like.intValue()));
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    //finalHolder.like_cnt.setText("0");
-                }
-            });
-*/
+            finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
             holder.like_button.setOnLikeListener(new OnLikeListener() {
                 @Override
                 public void liked(LikeButton likeButton) {
-                    firebase.child("photo").child(Integer.toString(data.get(position).getId())).child("like").setValue(finalHolder.photo.getLike() + 1);
-                    finalHolder.photo.setLike(finalHolder.photo.getLike() + 1);
-                    Log.d("LIKED ThIS PICTURE : ", Integer.toString(data.get(position).getId()));
+                    likemap.put("like", photo.getLike() + 1);
+                    photo.setLike(photo.getLike() + 1);
+                    currentRef.updateChildren(likemap);
+                    finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
                 }
 
                 @Override
                 public void unLiked(LikeButton likeButton) {
-                    firebase.child("photo").child(Integer.toString(data.get(position).getId())).child("like").setValue(finalHolder.photo.getLike() - 1);
-                    finalHolder.photo.setLike(finalHolder.photo.getLike() - 1);
-                    Log.d("UNLIKED ThIS PICTURE : ", Integer.toString(data.get(position).getId()));
+                    likemap.put("like", photo.getLike() - 1);
+                    photo.setLike(photo.getLike() - 1);
+                    currentRef.updateChildren(likemap);
                 }
             });
+
+           /* currentRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                   finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    finalHolder.like_cnt.setText("0");
+                }
+            });*/
+
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
         }
 
-        holder.image.setImageBitmap(holder.photo.getPhoto());
-        holder.image.setMinimumWidth(holder.photo.getWidth());
-        holder.image.setMinimumHeight(holder.photo.getHeight());
+
+        Bitmap bitmap = base64ToBitmap(data.get(position));
+        holder.image.setImageBitmap(bitmap);
+        holder.image.setMinimumWidth(screen_width);
+        holder.image.setMinimumHeight(new_photo_height);
 
         return row;
     }
 
     static class ViewHolder {
         CircleImageView profile_pic;
-        Photo photo;
         TextView username;
         TextView timestamp;
         ImageView image;
         LikeButton like_button;
         TextView like_cnt;
         TextView like_tv;
-        int id;
     }
+
+    private static Bitmap base64ToBitmap(Photo current) {
+        byte[] decodedString = Base64.decode(current.getPhoto(), Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        return decodedByte;
+    }
+
 }

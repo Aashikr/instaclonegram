@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by lamine on 29/03/2016.
@@ -67,36 +68,28 @@ public class FragmentFeed extends Fragment {
         //initialize_views(rootView);
 
 
-        DisplayMetrics displayMetrics=getResources().getDisplayMetrics();
-        final int screen_width = displayMetrics.widthPixels;
         final ListView lv = (ListView)rootView.findViewById(R.id.feed_listView);
 
         FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
         fab.attachToListView(lv);
 
         final ArrayList<Photo> al = new ArrayList<>();
+        final ArrayList<String> ids = new ArrayList<>();
 
         Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/images");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                al.clear();
+                ids.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Map<String,Object> image_map = (Map<String, Object>) dataSnapshot.child("kevin").getValue();
-                    for (Map.Entry<String, Object> entry : image_map.entrySet()) {
-                        String photo_str = String.valueOf(entry.getValue());
-                        byte[] decodedString = Base64.decode(photo_str, Base64.DEFAULT);
-                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                        if (decodedByte == null) {
-                            Log.d("decodedbyte", "null");
-                        }
-                        int photo_height = decodedByte.getHeight();
-                        int photo_width = decodedByte.getWidth();
-                        final int new_photo_height = (screen_width * photo_height) / photo_width;
-                        Photo photo = new Photo(decodedByte, 7, entry.getKey(), 0, "20m", screen_width, new_photo_height);
-                        al.add(photo);
-                    }
+                    String snap_id = postSnapshot.getKey();
+                    Photo photo = postSnapshot.getValue(Photo.class);
+                    Log.d("snap", snap_id);
+                    al.add(photo);
+                    ids.add(snap_id);
                 }
-                FeedListViewAdapter flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, firebase);
+                FeedListViewAdapter flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
                 lv.setAdapter(flva);
             }
 
@@ -105,7 +98,6 @@ public class FragmentFeed extends Fragment {
 
             }
         });
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,8 +106,8 @@ public class FragmentFeed extends Fragment {
             }
         });
 
-        FeedListViewAdapter flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, firebase);
-        lv.setAdapter(flva);
+        /*FeedListViewAdapter flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, firebase);
+        lv.setAdapter(flva);*/
         return rootView;
     }
 
@@ -137,11 +129,10 @@ public class FragmentFeed extends Fragment {
                 options);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         // Must compress the Image to reduce image size to make upload easy
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
         byte[] byte_arr = stream.toByteArray();
         // Encode Image to String
         encodedString = Base64.encodeToString(byte_arr, 0);
-        Log.d("SIZE IMAGE!!!!!", Integer.toString(encodedString.length()));
         return encodedString;
     }
 
@@ -170,7 +161,16 @@ public class FragmentFeed extends Fragment {
                 /* ENCODED */
 
                 String converted = convertImage();
-                firebase.child("images").child(username).child(fileName.replace(".", "o")).setValue(converted);
+                Random rand = new Random();
+                int randomNum = rand.nextInt(1000001);
+                Long tsLong = System.currentTimeMillis()/1000;
+                String timestamp = tsLong.toString();
+
+
+                Photo new_pic = new Photo(converted, fileName.replace(".", "o"),randomNum, username, 0,
+                        timestamp, bitmap.getHeight(), bitmap.getWidth());
+
+                firebase.child("images").push().setValue(new_pic);
 
             } else {
                 Toast.makeText(this.getActivity().getApplicationContext(), "You haven't picked Image",

@@ -54,8 +54,8 @@ public class FragmentProfile extends Fragment {
         DisplayMetrics displayMetrics=getResources().getDisplayMetrics();
         int screen_width = displayMetrics.widthPixels;
         int view_width = screen_width/3;   //width for imageview
-        gridAdapter = new GridViewAdapter(getContext(), R.layout.grid_item_layout, getData(), view_width);
-        gridView.setAdapter(gridAdapter);
+        //gridAdapter = new GridViewAdapter(getContext(), R.layout.grid_item_layout, getData(), view_width);
+        //gridView.setAdapter(gridAdapter);
         return rootView;
     }
 
@@ -64,7 +64,7 @@ public class FragmentProfile extends Fragment {
         TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
         for (int i = 0; i < imgs.length(); i++) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
-            imageItems.add(new Photo(bitmap));
+            //imageItems.add(new Photo(bitmap));
             Log.d("bitmap", imgs.toString());
         }
         return imageItems;

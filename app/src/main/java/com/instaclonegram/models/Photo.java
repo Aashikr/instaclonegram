@@ -3,7 +3,8 @@ package com.instaclonegram.models;
 import android.graphics.Bitmap;
 
 public class Photo {
-    private Bitmap photo;
+    private String photo;
+    private String filename;
     private int id;
     private String username;
     private String caption;
@@ -14,27 +15,41 @@ public class Photo {
     private int width;
     private String privacy;
 
-    public Photo(Bitmap photo) {
+    public Photo() {
+
+    }
+
+    public Photo(String photo) {
         super();
         this.photo = photo;
     }
 
-    public Photo(Bitmap photo, int id,  String username, int like, String timeStamp, int width, int height) {
+    public Photo(String photo, String filename, int id,  String username, int like, String timeStamp, int width, int height) {
         super();
         this.photo = photo;
+        this.filename = filename;
         this.id = id;
         this.username = username;
         this.like = like;
         this.timeStamp = timeStamp;
-
+        this.width = width;
+        this.height = height;
     }
 
-    public Bitmap getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(Bitmap photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public int getId() {

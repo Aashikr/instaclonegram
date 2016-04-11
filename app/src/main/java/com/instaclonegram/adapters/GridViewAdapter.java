@@ -47,7 +47,7 @@ public class GridViewAdapter extends ArrayAdapter {
         }
 
         Photo photo = data.get(position);
-        holder.image.setImageBitmap(photo.getPhoto());
+        //holder.image.setImageBitmap(photo.getPhoto());
         holder.image.setMinimumWidth(width);
         holder.image.setMinimumHeight(width);
         return row;
