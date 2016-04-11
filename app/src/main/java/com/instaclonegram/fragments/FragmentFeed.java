@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -52,6 +53,7 @@ public class FragmentFeed extends Fragment {
     Bitmap bitmap;
     private static int RESULT_LOAD_IMG = 1;
     private static String username = "kevin";
+    FeedListViewAdapter flva;
 
     Firebase firebase;
     public FragmentFeed() {
@@ -89,7 +91,7 @@ public class FragmentFeed extends Fragment {
                     al.add(photo);
                     ids.add(snap_id);
                 }
-                FeedListViewAdapter flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
+                flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
                 lv.setAdapter(flva);
             }
 
@@ -97,6 +99,36 @@ public class FragmentFeed extends Fragment {
             public void onCancelled(FirebaseError firebaseError) {
 
             }
+        });
+
+        ref.addChildEventListener(new ChildEventListener() {
+            // Retrieve new posts as they are added to the database
+            @Override
+            public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+            //... ChildEventListener also defines onChildChanged, onChildRemoved,
+            //    onChildMoved and onCanceled, covered in later sections.
         });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,6 +203,8 @@ public class FragmentFeed extends Fragment {
                         timestamp, bitmap.getHeight(), bitmap.getWidth());
 
                 firebase.child("images").push().setValue(new_pic);
+                //flva.notifyDataSetChanged();
+
 
             } else {
                 Toast.makeText(this.getActivity().getApplicationContext(), "You haven't picked Image",

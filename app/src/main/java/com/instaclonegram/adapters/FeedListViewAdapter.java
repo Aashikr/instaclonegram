@@ -86,14 +86,14 @@ public class FeedListViewAdapter extends ArrayAdapter {
 
             final ViewHolder finalHolder = holder;
 
-            finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
+            //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
             holder.like_button.setOnLikeListener(new OnLikeListener() {
                 @Override
                 public void liked(LikeButton likeButton) {
                     likemap.put("like", photo.getLike() + 1);
                     photo.setLike(photo.getLike() + 1);
                     currentRef.updateChildren(likemap);
-                    finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
+                    //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
                 }
 
                 @Override
@@ -104,17 +104,17 @@ public class FeedListViewAdapter extends ArrayAdapter {
                 }
             });
 
-           /* currentRef.addValueEventListener(new ValueEventListener() {
+            currentRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-                   finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
+                   finalHolder.like_cnt.setText(String.valueOf(snapshot.child("like").getValue()));
                 }
 
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     finalHolder.like_cnt.setText("0");
                 }
-            });*/
+            });
 
             row.setTag(holder);
         } else {
