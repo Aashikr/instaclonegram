@@ -107,18 +107,38 @@ public class FeedListViewAdapter extends ArrayAdapter {
         holder.like_button.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                    likemap.put("like", photo.getLike() + 1);
-                    photo.setLike(photo.getLike() + 1);
-                    currentRef.updateChildren(likemap);
+                    currentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            likemap.put("like", photo.getLike() + 1);
+                            photo.setLike(photo.getLike() + 1);
+                            currentRef.updateChildren(likemap);
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
                 //Log.d("CURRENT ID", ids.get(position));
                 //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                likemap.put("like", photo.getLike() - 1);
-                photo.setLike(photo.getLike() - 1);
-                currentRef.updateChildren(likemap);
+                currentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        likemap.put("like", photo.getLike() - 1);
+                        photo.setLike(photo.getLike() - 1);
+                        currentRef.updateChildren(likemap);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
             }
         });
 

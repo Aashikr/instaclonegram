@@ -23,6 +23,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.instaclonegram.R;
 import com.instaclonegram.adapters.FeedListViewAdapter;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +78,8 @@ public class FragmentFeed extends Fragment {
         final ArrayList<String> ids = new ArrayList<>();
 
         Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/images");
-        ref.addValueEventListener(new ValueEventListener() {
+        Query queryRef = ref.orderByChild("timeStamp");
+        queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 al.clear();
@@ -88,10 +91,11 @@ public class FragmentFeed extends Fragment {
                     al.add(photo);
                     ids.add(snap_id);
                 }
-                Log.d("AL SIZE", Integer.toString(al.size()));
-                Log.d("IDS SIZE", Integer.toString(ids.size()));
+                Collections.reverse(al);
+                Collections.reverse(ids);
                 flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
                 lv.setAdapter(flva);
+                flva.clear();
             }
 
             @Override
@@ -104,12 +108,20 @@ public class FragmentFeed extends Fragment {
             // Retrieve new posts as they are added to the database
             @Override
             public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
-
+                Collections.reverse(al);
+                Collections.reverse(ids);
+                al.add(snapshot.getValue(Photo.class));
+                ids.add(snapshot.getKey());
+                Collections.reverse(al);
+                Collections.reverse(ids);
+                flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
+                lv.setAdapter(flva);
+                //lv.getAdapter()
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                //ref.removeEventListener(this);
             }
 
             @Override
@@ -133,6 +145,7 @@ public class FragmentFeed extends Fragment {
             @Override
             public void onClick(View v) {
                 loadImagefromGallery(rootView);
+                flva.notifyDataSetChanged();
                 //firebase.child("image").child(bmp.get).setValue(imageFile);
             }
         });
