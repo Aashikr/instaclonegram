@@ -59,8 +59,9 @@ public class FeedListViewAdapter extends ArrayAdapter {
         ViewHolder holder = null;
         final Photo photo = data.get(position);
         final String str = ids.get(position);
+        Log.d("CURRENT GETVIEW ID", str);
         final Firebase currentRef = firebase.child("images").child(str);
-        final Map<String, Object> likemap = new HashMap<String, Object>();
+        final Map<String, Object> likemap = new HashMap<>();
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
         final int screen_width = displayMetrics.widthPixels;
         new_photo_height = (screen_width * photo.getHeight()) / photo.getWidth();
@@ -84,42 +85,42 @@ public class FeedListViewAdapter extends ArrayAdapter {
             holder.like_tv = (TextView)row.findViewById(R.id.feed_tv_likes);
             holder.like_tv.setTextColor(ContextCompat.getColor(getContext(), R.color.instagramblue));
 
-            final ViewHolder finalHolder = holder;
-
-            //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
-            holder.like_button.setOnLikeListener(new OnLikeListener() {
-                @Override
-                public void liked(LikeButton likeButton) {
-                    likemap.put("like", photo.getLike() + 1);
-                    photo.setLike(photo.getLike() + 1);
-                    currentRef.updateChildren(likemap);
-                    //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
-                }
-
-                @Override
-                public void unLiked(LikeButton likeButton) {
-                    likemap.put("like", photo.getLike() - 1);
-                    photo.setLike(photo.getLike() - 1);
-                    currentRef.updateChildren(likemap);
-                }
-            });
-
-            currentRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                   finalHolder.like_cnt.setText(String.valueOf(snapshot.child("like").getValue()));
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    finalHolder.like_cnt.setText("0");
-                }
-            });
-
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
         }
+
+
+        final ViewHolder finalHolder = holder;
+        currentRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+               finalHolder.like_cnt.setText(String.valueOf(snapshot.child("like").getValue()));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                finalHolder.like_cnt.setText("0");
+            }
+        });
+
+        holder.like_button.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                    likemap.put("like", photo.getLike() + 1);
+                    photo.setLike(photo.getLike() + 1);
+                    currentRef.updateChildren(likemap);
+                //Log.d("CURRENT ID", ids.get(position));
+                //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                likemap.put("like", photo.getLike() - 1);
+                photo.setLike(photo.getLike() - 1);
+                currentRef.updateChildren(likemap);
+            }
+        });
 
 
         Bitmap bitmap = base64ToBitmap(data.get(position));

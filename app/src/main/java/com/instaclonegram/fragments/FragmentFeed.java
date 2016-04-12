@@ -67,9 +67,6 @@ public class FragmentFeed extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
-        //initialize_views(rootView);
-
-
         final ListView lv = (ListView)rootView.findViewById(R.id.feed_listView);
 
         FloatingActionButton fab = (FloatingActionButton)rootView.findViewById(R.id.fab);
@@ -79,7 +76,7 @@ public class FragmentFeed extends Fragment {
         final ArrayList<String> ids = new ArrayList<>();
 
         Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/images");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 al.clear();
@@ -91,6 +88,8 @@ public class FragmentFeed extends Fragment {
                     al.add(photo);
                     ids.add(snap_id);
                 }
+                Log.d("AL SIZE", Integer.toString(al.size()));
+                Log.d("IDS SIZE", Integer.toString(ids.size()));
                 flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
                 lv.setAdapter(flva);
             }
