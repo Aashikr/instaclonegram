@@ -22,12 +22,15 @@ import android.widget.TextView;
 import com.firebase.client.Firebase;
 import com.instaclonegram.R;
 import com.instaclonegram.adapters.GridViewAdapter;
+import com.instaclonegram.library.GetBitmapAsyncTask;
 import com.instaclonegram.library.URLSpanNoUnderline;
 import com.instaclonegram.models.Photo;
+import com.instaclonegram.models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -38,16 +41,28 @@ public class FragmentProfile extends Fragment {
     private GridView gridView;
     private GridViewAdapter gridAdapter;
     Firebase firebase;
+    User user;
 
-    public FragmentProfile(Firebase firebase) {
+    public FragmentProfile(Firebase firebase, User user) {
+
         this.firebase = firebase;
+        this.user = user;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         CircleImageView profile = (CircleImageView)rootView.findViewById(R.id.feed_profile_imgview);
-        profile.setImageResource(R.drawable.kevinsys);
+        Bitmap bit = null;
+        try {
+            bit = new GetBitmapAsyncTask().execute(user.getPicture()).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        profile.setImageBitmap(bit);
         initializeViews(rootView);
 
         gridView = (GridView) rootView.findViewById(R.id.profile_gridView);
@@ -96,14 +111,20 @@ public class FragmentProfile extends Fragment {
         Button editprofile = (Button)rootView.findViewById(R.id.button_editprofile);
         editprofile.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.darkgreycolor));
         tv_profile_username.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.darkgreycolor1));
+        tv_profile_username.setText(user.getName());
         tv_profile_description.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.darkgreycolor1));
+        tv_profile_description.setText(user.getDescription());
         tv_profile_link.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.linkbluecolor));
+        tv_profile_link.setText(user.getLink());
         tv_following.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.greycolor1));
         tv_followers.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.greycolor1));
         tv_posts.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.greycolor1));
         tv_following_cnt.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.darkgreycolor1));
+        tv_following_cnt.setText(Integer.toString(user.getFollowingCnt()));
         tv_followers_cnt.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.darkgreycolor1));
+        tv_followers_cnt.setText(Integer.toString(user.getFollowersCnt()));
         tv_posts_cnt.setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.darkgreycolor1));
+        tv_posts_cnt.setText(Integer.toString(user.getPostCnt()));
 
         removeUnderlines((Spannable) tv_profile_link.getText());
     }

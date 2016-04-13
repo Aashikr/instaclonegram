@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
+import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -147,7 +148,10 @@ public class FeedListViewAdapter extends ArrayAdapter {
         holder.image.setImageBitmap(bitmap);
         holder.image.setMinimumWidth(screen_width);
         holder.image.setMinimumHeight(new_photo_height);
-
+        CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(Long.parseLong(photo.getTimeStamp()), System.currentTimeMillis()
+                , DateUtils.SECOND_IN_MILLIS);
+        holder.timestamp.setText(timeAgo);
+        holder.username.setText(photo.getUsername());
         return row;
     }
 

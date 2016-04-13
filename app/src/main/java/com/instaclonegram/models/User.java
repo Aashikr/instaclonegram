@@ -2,15 +2,40 @@ package com.instaclonegram.models;
 
 public class User {
     private String id;
+    private String picture;
     private String username;
     private String name;
     private String description;
-    private String url;
     private String link;
     private String email;
     private String privacy;
-    private String followersCnt;
-    private String followingCnt;
+    private int followersCnt;
+    private int followingCnt;
+    private int postcnt;
+
+    public User() {
+
+    }
+
+    public User(String picture, String username, String name, String description, String link, String email,
+                String privacy, int followersCnt, int followingCnt, int postcnt) {
+        this.picture = picture;
+        this.username = username;
+        this.name = name;
+        this.description = description;
+        this.link = link;
+        this.email = email;
+        this.privacy = privacy;
+        this.followersCnt = followersCnt;
+        this.followingCnt = followingCnt;
+        this.postcnt = postcnt;
+    }
+
+    public String getPicture() { return picture; }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public String getId() {
         return id;
@@ -44,14 +69,6 @@ public class User {
         this.description = description;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getLink() {
         return link;
     }
@@ -76,20 +93,28 @@ public class User {
         this.privacy = privacy;
     }
 
-    public String getFollowersCnt() {
+    public int getFollowersCnt() {
         return followersCnt;
     }
 
-    public void setFollowersCnt(String followersCnt) {
+    public void setFollowersCnt(int followersCnt) {
         this.followersCnt = followersCnt;
     }
 
-    public String getFollowingCnt() {
+    public int getFollowingCnt() {
         return followingCnt;
     }
 
-    public void setFollowingCnt(String followingCnt) {
+    public void setFollowingCnt(int followingCnt) {
         this.followingCnt = followingCnt;
+    }
+
+    public int getPostCnt() {
+        return postcnt;
+    }
+
+    public void setPostCnt(int postcnt) {
+        this.postcnt = postcnt;
     }
 
 }

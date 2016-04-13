@@ -28,6 +28,7 @@ import com.firebase.client.ValueEventListener;
 import com.instaclonegram.R;
 import com.instaclonegram.adapters.FeedListViewAdapter;
 import com.instaclonegram.models.Photo;
+import com.instaclonegram.models.User;
 import com.like.LikeButton;
 import com.melnykov.fab.FloatingActionButton;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -56,14 +57,16 @@ public class FragmentFeed extends Fragment {
     private static int RESULT_LOAD_IMG = 1;
     private static String username = "kevin";
     FeedListViewAdapter flva;
+    User user;
 
     Firebase firebase;
     public FragmentFeed() {
 
     }
 
-    public FragmentFeed(Firebase firebase) {
+    public FragmentFeed(Firebase firebase, User user) {
         this.firebase = firebase;
+        this.user = user;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -211,7 +214,7 @@ public class FragmentFeed extends Fragment {
                 String timestamp = tsLong.toString();
 
 
-                Photo new_pic = new Photo(converted, fileName.replace(".", "o"),randomNum, username, 0,
+                Photo new_pic = new Photo(converted, fileName.replace(".", "o"),randomNum, user.getUsername(), 0,
                         timestamp, bitmap.getHeight(), bitmap.getWidth());
 
                 firebase.child("images").push().setValue(new_pic);
