@@ -88,6 +88,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection section1 = newSection("Profile", new FragmentProfile(myFirebaseRef, user));
         MaterialSection section2 = newSection("Feed", new FragmentFeed(myFirebaseRef, user));
         MaterialSection section3 = newSection("Explore", new FragmentExplore());
+        allowArrowAnimation();
         addAccount(account);
         addSection(section2);
         addSection(section1);

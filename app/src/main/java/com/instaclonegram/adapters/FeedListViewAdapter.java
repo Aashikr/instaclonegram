@@ -2,10 +2,14 @@ package com.instaclonegram.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Base64;
@@ -26,6 +30,10 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.instaclonegram.MainActivity;
 import com.instaclonegram.R;
+import com.instaclonegram.fragments.FragmentExplore;
+import com.instaclonegram.fragments.FragmentFeed;
+import com.instaclonegram.fragments.FragmentProfile;
+import com.instaclonegram.fragments.FragmentRegister;
 import com.instaclonegram.library.GetBitmapAsyncTask;
 import com.instaclonegram.models.Photo;
 import com.instaclonegram.models.User;
@@ -38,6 +46,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 
 /**
  * Created by lamine on 09/04/2016.
@@ -50,15 +59,16 @@ public class FeedListViewAdapter extends ArrayAdapter {
     private ArrayList<String> ids = new ArrayList<>();
     private Firebase firebase;
     private int new_photo_height;
+    private FragmentFeed fragmentFeed;
 
-
-    public FeedListViewAdapter(Context context, int layoutResourceId, ArrayList data, ArrayList ids, Firebase firebase) {
+    public FeedListViewAdapter(Context context, int layoutResourceId, ArrayList data, ArrayList ids, Firebase firebase, FragmentFeed fragmentFeed) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
         this.ids = ids;
         this.firebase = firebase;
+        this.fragmentFeed = fragmentFeed;
     }
 
     @Override
@@ -183,12 +193,26 @@ public class FeedListViewAdapter extends ArrayAdapter {
 
     private void setProfilePicFromUsername(String username, final ViewHolder holder) {
         Firebase.setAndroidContext(this.getContext());
-        Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/users");
+        final Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/users");
         Query queryRef = ref.orderByChild("username").equalTo(username);
         queryRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                User user = dataSnapshot.getValue(User.class);
+            public void onChildAdded(final DataSnapshot dataSnapshot, String s) {
+
+                final User user = dataSnapshot.getValue(User.class);
+                holder.username.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //final User user = dataSnapshot.getValue(User.class);
+                        final Context context = fragmentFeed.getContext();
+                        /*FragmentManager fm = fragmentFeed.getChildFragmentManager();
+                        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                        fragmentTransaction.replace(fragmentFeed.getParentFragment().getView().getId(), new FragmentProfile(ref, user)).commit();
+                        */
+                        ((MaterialNavigationDrawer)fragmentFeed.getActivity()).setFragment(new FragmentProfile(firebase, user), user.getName());
+                    }
+                });
+
                 String profilePic = user.getPicture();
                 Bitmap profilePicBitmap = null;
                 try {

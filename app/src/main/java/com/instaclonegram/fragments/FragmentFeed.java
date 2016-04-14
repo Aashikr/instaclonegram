@@ -96,7 +96,7 @@ public class FragmentFeed extends Fragment {
                 }
                 Collections.reverse(al);
                 Collections.reverse(ids);
-                flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
+                flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase, FragmentFeed.this);
                 lv.setAdapter(flva);
                 flva.clear();
             }
@@ -117,7 +117,7 @@ public class FragmentFeed extends Fragment {
                 ids.add(snapshot.getKey());
                 Collections.reverse(al);
                 Collections.reverse(ids);
-                flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase);
+                flva = new FeedListViewAdapter(getContext(), R.layout.photo_item, al, ids, firebase, FragmentFeed.this);
                 lv.setAdapter(flva);
                 //lv.getAdapter()
             }
