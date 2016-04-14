@@ -2,6 +2,7 @@ package com.instaclonegram.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,18 +18,24 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
+import com.instaclonegram.MainActivity;
 import com.instaclonegram.R;
+import com.instaclonegram.library.GetBitmapAsyncTask;
 import com.instaclonegram.models.Photo;
+import com.instaclonegram.models.User;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -108,19 +115,19 @@ public class FeedListViewAdapter extends ArrayAdapter {
         holder.like_button.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                    currentRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            likemap.put("like", photo.getLike() + 1);
-                            photo.setLike(photo.getLike() + 1);
-                            currentRef.updateChildren(likemap);
-                        }
+                currentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        likemap.put("like", photo.getLike() + 1);
+                        photo.setLike(photo.getLike() + 1);
+                        currentRef.updateChildren(likemap);
+                    }
 
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
 
-                        }
-                    });
+                    }
+                });
                 //Log.d("CURRENT ID", ids.get(position));
                 //finalHolder.like_cnt.setText(String.valueOf(photo.getLike()));
             }
@@ -148,6 +155,9 @@ public class FeedListViewAdapter extends ArrayAdapter {
         holder.image.setImageBitmap(bitmap);
         holder.image.setMinimumWidth(screen_width);
         holder.image.setMinimumHeight(new_photo_height);
+
+        setProfilePicFromUsername(photo.getUsername(), holder);
+
         CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(Long.parseLong(photo.getTimeStamp()), System.currentTimeMillis()
                 , DateUtils.SECOND_IN_MILLIS);
         holder.timestamp.setText(timeAgo);
@@ -169,6 +179,48 @@ public class FeedListViewAdapter extends ArrayAdapter {
         byte[] decodedString = Base64.decode(current.getPhoto(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         return decodedByte;
+    }
+
+    private void setProfilePicFromUsername(String username, final ViewHolder holder) {
+        Firebase.setAndroidContext(this.getContext());
+        Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/users");
+        Query queryRef = ref.orderByChild("username").equalTo(username);
+        queryRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                User user = dataSnapshot.getValue(User.class);
+                String profilePic = user.getPicture();
+                Bitmap profilePicBitmap = null;
+                try {
+                    profilePicBitmap = new GetBitmapAsyncTask().execute(profilePic).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                holder.profile_pic.setImageBitmap(profilePicBitmap);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
 }

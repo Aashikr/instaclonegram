@@ -65,11 +65,20 @@ public class MainActivity extends MaterialNavigationDrawer {
             Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/users");
             String id = Integer.toString(generateRandomNumber());
             String picture = intent.getStringExtra("picture");
+
+            try {
+                bit = new GetBitmapAsyncTask().execute(picture).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
             String username = intent.getStringExtra("username");
             String name = intent.getStringExtra("name");
             String email = intent.getStringExtra("email");
 
-            user = new User(id, picture, username, name, "I am "+ name + "and I love building stuff!", "www.laminekechache.com",
+            user = new User(id, picture, username, name, "I am "+ name + " and I love building stuff!", "www.laminekechache.com",
                     email, "public", 0, 0, 0);
             ref.child(user.getEmail().replaceAll(".", "")).push().setValue(user);
         }
