@@ -2,6 +2,7 @@ package com.instaclonegram.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.BitmapCompat;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -34,6 +36,8 @@ import com.instaclonegram.fragments.FragmentExplore;
 import com.instaclonegram.fragments.FragmentFeed;
 import com.instaclonegram.fragments.FragmentProfile;
 import com.instaclonegram.fragments.FragmentRegister;
+import com.instaclonegram.library.AsyncDrawable;
+import com.instaclonegram.library.BitmapWorkerTask;
 import com.instaclonegram.library.GetBitmapAsyncTask;
 import com.instaclonegram.models.Photo;
 import com.instaclonegram.models.User;
@@ -59,6 +63,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
     private ArrayList<String> ids = new ArrayList<>();
     private Firebase firebase;
     private int new_photo_height;
+    private int screen_width;
     private FragmentFeed fragmentFeed;
 
     public FeedListViewAdapter(Context context, int layoutResourceId, ArrayList data, ArrayList ids, Firebase firebase, FragmentFeed fragmentFeed) {
@@ -81,7 +86,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
         final Firebase currentRef = firebase.child("images").child(str);
         final Map<String, Object> likemap = new HashMap<>();
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
-        final int screen_width = displayMetrics.widthPixels;
+        screen_width = displayMetrics.widthPixels;
         new_photo_height = (screen_width * photo.getHeight()) / photo.getWidth();
 
         Log.d("Viewing", Integer.toString(data.get(position).getId()));
@@ -113,7 +118,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
         currentRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-               finalHolder.like_cnt.setText(String.valueOf(snapshot.child("like").getValue()));
+                finalHolder.like_cnt.setText(String.valueOf(snapshot.child("like").getValue()));
             }
 
             @Override
@@ -161,10 +166,12 @@ public class FeedListViewAdapter extends ArrayAdapter {
         });
 
 
-        Bitmap bitmap = base64ToBitmap(data.get(position));
+        /*Bitmap bitmap = base64ToBitmap(data.get(position));
         holder.image.setImageBitmap(bitmap);
         holder.image.setMinimumWidth(screen_width);
-        holder.image.setMinimumHeight(new_photo_height);
+        holder.image.setMinimumHeight(new_photo_height);*/
+
+        loadBitmap(holder.image, data.get(position));
 
         setProfilePicFromUsername(photo.getUsername(), holder);
 
@@ -189,6 +196,44 @@ public class FeedListViewAdapter extends ArrayAdapter {
         byte[] decodedString = Base64.decode(current.getPhoto(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         return decodedByte;
+    }
+
+    public void loadBitmap(ImageView imageView, Photo photo) {
+        if (cancelPotentialWork(photo.getPhoto(), imageView)) {
+            Bitmap bm = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.item_placeholder);
+            final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+            final AsyncDrawable asyncDrawable = new AsyncDrawable(getContext().getResources(), bm, task);
+            imageView.setImageDrawable(asyncDrawable);
+            task.execute(photo.getPhoto(), String.valueOf(new_photo_height), String.valueOf(screen_width));
+        }
+    }
+
+    public static boolean cancelPotentialWork(String data, ImageView imageView) {
+        final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+        if (bitmapWorkerTask != null) {
+            final String bitmapData = bitmapWorkerTask.data;
+            // If bitmapData is not yet set or it differs from the new data
+            if (bitmapData.contentEquals("") || bitmapData != data) {
+                // Cancel previous task
+                bitmapWorkerTask.cancel(true);
+            } else {
+                // The same work is already in progress
+                return false;
+            }
+        }
+        // No task associated with the ImageView, or an existing task was cancelled
+        return true;
+    }
+
+    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+        if (imageView != null) {
+            final Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof AsyncDrawable) {
+                final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+                return asyncDrawable.getBitmapWorkerTask();
+            }
+        }
+        return null;
     }
 
     private void setProfilePicFromUsername(String username, final ViewHolder holder) {
@@ -217,6 +262,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
                 Bitmap profilePicBitmap = null;
                 try {
                     profilePicBitmap = new GetBitmapAsyncTask().execute(profilePic).get();
+                    //profilePicBitmap.
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -246,5 +292,7 @@ public class FeedListViewAdapter extends ArrayAdapter {
             }
         });
     }
+
+
 
 }
