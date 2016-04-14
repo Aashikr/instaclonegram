@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
@@ -23,12 +24,16 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.instaclonegram.MainActivity;
 import com.instaclonegram.R;
 import java.util.Map;
 import com.facebook.FacebookSdk;
+import com.instaclonegram.models.User;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 
@@ -51,6 +56,7 @@ public class FragmentLogin extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         final EditText et_email = (EditText)rootView.findViewById(R.id.et_email);
         final EditText et_pwd = (EditText)rootView.findViewById(R.id.et_pwd);
+        //final User[] user = new User[1];
         Firebase.setAndroidContext(getActivity());
         FacebookSdk.sdkInitialize(this.getActivity().getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -61,8 +67,6 @@ public class FragmentLogin extends Fragment {
                 onFacebookAccessTokenChange(currentAccessToken);
             }
         };
-
-
 
         LoginButton btn_login_facebook = (LoginButton)rootView.findViewById(R.id.login_button_fb);
         btn_login_facebook.setReadPermissions("user_friends");
@@ -101,10 +105,7 @@ public class FragmentLogin extends Fragment {
                         @Override
                         public void onAuthenticated(AuthData authData) {
                             //System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
-                            Intent myIntent = new Intent(getActivity(), MainActivity.class);
-                            myIntent.putExtra("process", "loginSimple");
-                            myIntent.putExtra("email", et_email.getText().toString()); //Optional parameters
-                            getActivity().startActivity(myIntent);
+                            getUserAndStartActivity(et_email.getText().toString(), "loginSimple");
                         }
 
                         @Override
@@ -147,8 +148,10 @@ public class FragmentLogin extends Fragment {
                     myIntent.putExtra("email", String.valueOf(authData.getProviderData().get("email"))); //Optional parameters
                     myIntent.putExtra("picture", String.valueOf(authData.getProviderData().get("profileImageURL"))); //Optional parameters
                     myIntent.putExtra("name", String.valueOf(authData.getProviderData().get("displayName")));
-                    myIntent.putExtra("username", String.valueOf(authData.getProviderData().get("displayName")).replaceAll(" ",""));
+                    myIntent.putExtra("username", String.valueOf(authData.getProviderData().get("displayName")).replaceAll(" ", ""));
                     getActivity().startActivity(myIntent);
+
+                    //getUserAndStartActivity(String.valueOf(authData.getProviderData().get("email")), "loginFacebook");
                 }
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
@@ -161,5 +164,40 @@ public class FragmentLogin extends Fragment {
             //Log.d("ERRORFACEBOOK", token.toString());
         }
 
+    }
+
+    private void getUserAndStartActivity(String email, final String process) {
+        Firebase ref = new Firebase("https://instaclonegram.firebaseio.com/users");
+        Query queryRef = ref.orderByChild("email").equalTo(email);
+        queryRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                User user = dataSnapshot.getValue(User.class);
+                Intent myIntent = new Intent(getActivity(), MainActivity.class);
+                myIntent.putExtra("user", user);
+                myIntent.putExtra("process", process);
+                getActivity().startActivity(myIntent);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 }

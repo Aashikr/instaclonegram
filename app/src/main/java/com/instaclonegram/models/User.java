@@ -1,6 +1,8 @@
 package com.instaclonegram.models;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String id;
     private String picture;
     private String username;
@@ -11,14 +13,15 @@ public class User {
     private String privacy;
     private int followersCnt;
     private int followingCnt;
-    private int postcnt;
+    private int postCnt;
 
     public User() {
 
     }
 
-    public User(String picture, String username, String name, String description, String link, String email,
-                String privacy, int followersCnt, int followingCnt, int postcnt) {
+    public User(String id, String picture, String username, String name, String description, String link, String email,
+                String privacy, int followersCnt, int followingCnt, int postCnt) {
+        this.id = id;
         this.picture = picture;
         this.username = username;
         this.name = name;
@@ -28,7 +31,7 @@ public class User {
         this.privacy = privacy;
         this.followersCnt = followersCnt;
         this.followingCnt = followingCnt;
-        this.postcnt = postcnt;
+        this.postCnt = postCnt;
     }
 
     public String getPicture() { return picture; }
@@ -110,11 +113,11 @@ public class User {
     }
 
     public int getPostCnt() {
-        return postcnt;
+        return postCnt;
     }
 
-    public void setPostCnt(int postcnt) {
-        this.postcnt = postcnt;
+    public void setPostCnt(int postCnt) {
+        this.postCnt = postCnt;
     }
 
 }
