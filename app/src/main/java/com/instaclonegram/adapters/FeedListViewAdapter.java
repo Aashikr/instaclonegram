@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.BitmapCompat;
+import android.support.v4.util.LruCache;
 import android.text.format.DateUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -65,6 +66,10 @@ public class FeedListViewAdapter extends ArrayAdapter {
     private int new_photo_height;
     private int screen_width;
     private FragmentFeed fragmentFeed;
+    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    private static LruCache<String, Bitmap> mMemoryCache;
+    final int cacheSize = maxMemory / 2;
+
 
     public FeedListViewAdapter(Context context, int layoutResourceId, ArrayList data, ArrayList ids, Firebase firebase, FragmentFeed fragmentFeed) {
         super(context, layoutResourceId, data);
@@ -74,6 +79,12 @@ public class FeedListViewAdapter extends ArrayAdapter {
         this.ids = ids;
         this.firebase = firebase;
         this.fragmentFeed = fragmentFeed;
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                return bitmap.getByteCount() / 1024;
+            }
+        };
     }
 
     @Override
@@ -192,6 +203,18 @@ public class FeedListViewAdapter extends ArrayAdapter {
         TextView like_tv;
     }
 
+    public static void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+            Log.d("ADD BITMAP TO CACHE", key);
+        }
+    }
+
+    public static Bitmap getBitmapFromMemCache(String key) {
+        Log.d("GET BITMAP FROM CACHE", key);
+        return mMemoryCache.get(key);
+    }
+
     private static Bitmap base64ToBitmap(Photo current) {
         byte[] decodedString = Base64.decode(current.getPhoto(), Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -200,11 +223,19 @@ public class FeedListViewAdapter extends ArrayAdapter {
 
     public void loadBitmap(ImageView imageView, Photo photo) {
         if (cancelPotentialWork(photo.getPhoto(), imageView)) {
-            Bitmap bm = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.item_placeholder);
-            final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-            final AsyncDrawable asyncDrawable = new AsyncDrawable(getContext().getResources(), bm, task);
-            imageView.setImageDrawable(asyncDrawable);
-            task.execute(photo.getPhoto(), String.valueOf(new_photo_height), String.valueOf(screen_width));
+            final String imageKey = String.valueOf(photo.getId());
+            //final Bitmap bitmap = getBitmapFromMemCache(imageKey);
+            //if (bitmap != null) {
+            //    imageView.setImageBitmap(bitmap);
+            //} else {
+                Bitmap bm = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.item_placeholder);
+                final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+                final AsyncDrawable asyncDrawable = new AsyncDrawable(getContext().getResources(), bm, task);
+                imageView.setMinimumWidth(screen_width);
+                imageView.setMinimumHeight(new_photo_height);
+                imageView.setImageDrawable(asyncDrawable);
+                task.execute(photo.getPhoto(), String.valueOf(new_photo_height), String.valueOf(screen_width), String.valueOf(photo.getId()));
+           // }
         }
     }
 

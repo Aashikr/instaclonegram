@@ -3,17 +3,15 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@drawable/background2"
     android:id="@+id/linear_register">
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Instagram"
-        android:id="@+id/textView7"
+        android:id="@+id/imageView3"
         android:layout_gravity="center_horizontal"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp" />
+        android:src="@drawable/instagram" />
 
     <EditText
         android:layout_width="wrap_content"

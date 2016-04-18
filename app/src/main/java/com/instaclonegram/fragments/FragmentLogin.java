@@ -123,7 +123,9 @@ public class FragmentLogin extends Fragment {
             public void onClick(View v) {
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_content, new FragmentRegister(ref)).commit();
+                fragmentTransaction
+                        .setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right)
+                        .replace(R.id.frame_content, new FragmentRegister(ref)).commit();
             }
         });
         return rootView;

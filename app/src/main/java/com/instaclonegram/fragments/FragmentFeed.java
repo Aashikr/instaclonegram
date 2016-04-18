@@ -172,11 +172,11 @@ public class FragmentFeed extends Fragment {
         BitmapFactory.Options options = null;
         options = new BitmapFactory.Options();
         options.inSampleSize = 3;
-        bitmap = BitmapFactory.decodeFile(imgPath,
-                options);
+        bitmap = BitmapFactory.decodeFile(imgPath, options);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         // Must compress the Image to reduce image size to make upload easy
-        bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+
         byte[] byte_arr = stream.toByteArray();
         // Encode Image to String
         encodedString = Base64.encodeToString(byte_arr, 0);
