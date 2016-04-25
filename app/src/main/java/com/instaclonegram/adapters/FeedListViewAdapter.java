@@ -281,10 +281,6 @@ public class FeedListViewAdapter extends ArrayAdapter {
                     public void onClick(View v) {
                         //final User user = dataSnapshot.getValue(User.class);
                         final Context context = fragmentFeed.getContext();
-                        /*FragmentManager fm = fragmentFeed.getChildFragmentManager();
-                        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                        fragmentTransaction.replace(fragmentFeed.getParentFragment().getView().getId(), new FragmentProfile(ref, user)).commit();
-                        */
                         ((MaterialNavigationDrawer)fragmentFeed.getActivity()).setFragment(new FragmentProfile(firebase, user), user.getName());
                     }
                 });
